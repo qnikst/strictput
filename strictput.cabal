@@ -4,7 +4,7 @@ version:             0.1.0.0
 -- description:         
 license:             BSD3
 license-file:        LICENSE
-author:              Alexander Vershilov
+author:              Alexander Vershilov <alexander.vershilov@gmail.com>, Andreas Voellmy <andreas.voellmy@yale.edu>
 maintainer:          alexander.vershilov@gmail.com
 -- copyright:           
 category:            Data
