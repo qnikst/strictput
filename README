@@ -1,0 +1,5 @@
+This project is a StrictPut realiazation that may be usefull
+for serializing data structures to strict bytestring with 
+known upper bound. This package uses highly unsafe methods
+that use no length check and operate raw pointers, but it
+can lead to performance growth.
