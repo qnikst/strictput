@@ -23,12 +23,12 @@ library
 
 
 
--- benchmark bench-strictput-all
---   type:               exitcode-stdio-1.0
---   hs-source-dirs:     bench
---   main-is:            BenchAll.hs
---   build-depends:      base, criterion
---   ghc-options:        -O2
---                       -fmax-simplifier-iterations=10
---                       -fdicts-cheap
---                       -fspec-constr-count=6
+benchmark bench-strictput-simple-output
+  type:               exitcode-stdio-1.0
+  hs-source-dirs:     bench
+  main-is:            SimpleOutput.hs
+  build-depends:      base, criterion, bytestring, strictput, silently
+  ghc-options:        -O2
+                      -fmax-simplifier-iterations=10
+                      -fdicts-cheap
+                      -fspec-constr-count=6
