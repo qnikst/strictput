@@ -34,6 +34,7 @@ module Data.StrictPut (
   marker,
   toAddr,
   distance,
+  shrink,
   -- * Delay
   DelayedPut,
   undelay,
@@ -166,6 +167,11 @@ distance :: Marker
          -> PutM Int
 distance (Marker x) = PutM $ \x' -> return (x' `minusPtr` x, x')
 {-# INLINE distance #-}
+
+shrink :: Marker
+        -> Put
+shrink (Marker x) = PutM $ \_ -> return  ((),x)
+{-# INLINE shrink #-}
 
 -- | Get real address
 toAddr :: Marker -> Addr#
