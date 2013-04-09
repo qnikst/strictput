@@ -50,13 +50,13 @@ module Data.StrictPut (
   reuse
   ) where
 
-import Control.Applicative
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Internal as S
 import Data.ByteString.Builder.Prim
 import Data.ByteString.Builder.Prim.Internal
 import GHC.Word
-import Foreign
+import Foreign hiding ( unsafeForeignPtrToPtr )
+import Foreign.ForeignPtr.Unsafe ( unsafeForeignPtrToPtr )
 import GHC.Exts
 import System.IO.Unsafe
 
@@ -166,24 +166,6 @@ delayedWord16be = PutM $ \p -> poke (castPtr p) (0::Word16) >>
                                return (DelayedPut $ runPut p . putWord16be, p `plusPtr` 2)
 {-# INLINE delayedWord16be #-}
 
-{-# INLINE shiftr_w16 #-}
-shiftr_w16 :: Word16 -> Int -> Word16
-{-# INLINE shiftr_w32 #-}
-shiftr_w32 :: Word32 -> Int -> Word32
-{-# INLINE shiftr_w64 #-}
-shiftr_w64 :: Word64 -> Int -> Word64
-
-
-#if defined(__GLASGOW_HASKELL__) && !defined(__HADDOCK__)
-shiftr_w16 (W16# w) (I# i) = W16# (w `uncheckedShiftRL#` i)
-shiftr_w32 (W32# w) (I# i) = W32# (w `uncheckedShiftRL#` i)
-
-#if WORD_SIZE_IN_BITS < 64
-shiftr_w64 (W64# w) (I# i) = W64# (w `uncheckedShiftRL64#` i)
-#endif
-#endif
-
-
 data Buffer = Buffer {-# UNPACK #-} !(ForeignPtr Word8)   -- pinned array
                      {-# UNPACK #-} !(Ptr Word8)          -- current position
                      {-# UNPACK #-} !Int                  -- current size
@@ -198,8 +180,8 @@ extract :: Buffer -> S.ByteString
 extract (Buffer f _ c) = S.fromForeignPtr f 0 c
 
 mkBuffer :: Int -> IO Buffer
-mkBuffer size = do
-    fpbuf <- S.mallocByteString size
+mkBuffer sz = do
+    fpbuf <- S.mallocByteString sz
     let !pbuf = unsafeForeignPtrToPtr fpbuf
     return $! Buffer fpbuf pbuf 0 
 
