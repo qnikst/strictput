@@ -104,6 +104,6 @@ main = defaultMain
   , bgroup "stdout output under silence"
       [ bench "strict put w/buffering w/o reusing" $ silence main2
       , bench "strict put w/buffering w/reusing" $ silence main3
-      , bench "bytestring-builder" $ silence main3
+      , bench "bytestring-builder" $ silence main4
       ]
   ]
