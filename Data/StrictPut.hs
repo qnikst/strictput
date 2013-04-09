@@ -90,21 +90,21 @@ instance Monad PutM where
   {-# INLINE (>>=) #-}
   
 putWord8 :: Word8 -> Put
-putWord8 !w = PutM (\(!ptr) -> do { runF word8 w ptr ; return ((),ptr `plusPtr` 1) })
+putWord8 = encodeWithF word8
 {-# INLINE putWord8 #-}
 
 putWord16be :: Word16 -> Put
-putWord16be !w = PutM (\(!ptr) -> do { runF word16BE w ptr ; return ((),ptr `plusPtr` 2)})
+putWord16be = encodeWithF word16BE
 {-# INLINE putWord16be #-}
 
 -- | Write a Word32 in big endian format
 putWord32be :: Word32 -> Put
-putWord32be !w = PutM (\(!ptr) -> do { runF word32BE w ptr; return ((),ptr `plusPtr` 4)})
+putWord32be = encodeWithF word32BE
 {-# INLINE putWord32be #-}
 
 -- | Write a Word64 in big endian format
 putWord64be :: Word64 -> Put
-putWord64be !w = PutM (\(!ptr) -> do { runF word64BE w ptr; return ((),ptr `plusPtr` 8)})
+putWord64be = encodeWithF word64BE
 {-# INLINE putWord64be #-}
 
 putByteString :: S.ByteString -> Put
@@ -206,3 +206,6 @@ mkBuffer size = do
 
 runPutToBuffer :: Buffer -> Put -> IO Buffer
 runPutToBuffer (Buffer f p x) put = runPut p put >>= \i -> return (Buffer f (p `plusPtr`i)  (x+i))
+
+encodeWithF :: FixedPrim a -> a -> Put
+encodeWithF fixedPrim w = PutM $ \(!ptr) -> runF fixedPrim w ptr >> return ((), ptr `plusPtr` (size fixedPrim))
