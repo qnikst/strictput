@@ -61,12 +61,12 @@ putEth2 (i,j) = do
         putTcpHeader = do putWord32be 0 >> putWord32be 0 >> putWord32be 0 >> putWord32be 0
 {-# NOINLINE putEth2 #-}
 
-buildAll = mconcat (map buildEth2 [(i,j)|i <- [1..1000], j <- [1..1000]])
+buildAll = mconcat (map buildEth2 [(i,j)|i <- [1..100], j <- [1..100]])
 {-# NOINLINE buildAll #-}
 
 -- StrictPut w/o buffering
 main1 = do
-  mapM_ (\x -> BS.hPutStr stdout (runPutToByteString 4096 (putEth2 x))) [(i,j) | i <- [1..1000], j <- [1..1000]]
+  mapM_ (\x -> BS.hPutStr stdout (runPutToByteString 4096 (putEth2 x))) [(i,j) | i <- [1..100], j <- [1..100]]
 
 -- StrictPut with buffering w/o reusing
 main2 = do
@@ -78,7 +78,7 @@ main2 = do
             else do
                 b'' <- runPutToBuffer b' (putEth2 x)
                 go b'' xs
-  go b [(i,j) | i <- [1..1000], j <- [1..1000]]
+  go b [(i,j) | i <- [1..100], j <- [1..100]]
 
 -- StrictPut with buffering with reusing
 main3 = do
@@ -90,7 +90,7 @@ main3 = do
             else do
                 b'' <- runPutToBuffer b' (putEth2 x)
                 go b'' xs
-  go b [(i,j) | i <- [1..1000], j <- [1..1000]]
+  go b [(i,j) | i <- [1..100], j <- [1..100]]
  
 -- bytestring
 main4 = do
@@ -98,8 +98,8 @@ main4 = do
 
 main = defaultMain 
   [ bgroup "only generation" 
-      [ bench "strict put w/o buffering" $ nf (map (\x -> runPutToByteString 4096 (putEth2 x))) [(i,j) | i <- [1..1000], j <- [1..1000]]
-      , bench "bytestring builder" $ nf (map (\x -> toLazyByteString (buildEth x))) [(i,j) | i <- [1..1000], j <- [1..1000]]
+      [ bench "strict put w/o buffering" $ nf (map (\x -> runPutToByteString 4096 (putEth2 x))) [(i,j) | i <- [1..100], j <- [1..100]]
+      , bench "bytestring builder" $ nf (map (\x -> toLazyByteString (buildEth x))) [(i,j) | i <- [1..100], j <- [1..100]]
       ]
   , bgroup "stdout output under silence"
       [ bench "strict put w/buffering w/o reusing" $ silence main2
