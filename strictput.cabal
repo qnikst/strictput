@@ -31,6 +31,7 @@ benchmark bench-strictput-simple-output
   ghc-options:        -O2
                       -fmax-simplifier-iterations=10
                       -fdicts-cheap
+                      -fspec-constr-count=6
 
 benchmark bench-delayed-input
   type:               exitcode-stdio-1.0
@@ -40,4 +41,4 @@ benchmark bench-delayed-input
   ghc-options:        -O2
                       -fmax-simplifier-iterations=10
                       -fdicts-cheap
-                      -fspec-constr-count=6                     -fspec-constr-count=6
+                      -fspec-constr-count=6
