@@ -3,33 +3,28 @@ import Data.StrictPut
 import Criterion.Main
 
 test0 w = runPutToByteString 32768 $ do
-    xs <- replicateM (length w) delayedWord8
-    mapM_ (uncurry undelay) $ zip xs w
+    mapM_ (\x -> delayedWord8 >>= flip undelay x) w
 
 test1 w =  runPutToByteString 32768 $ do
-    xs <- replicateM (length w) delayedWord16be
-    mapM_ (uncurry undelay) $ zip xs w
+    mapM_ (\x -> delayedWord16be >>= flip undelay x) w
 
 test2 w = runPutToByteString 32768 $ do
-    xs1 <- replicateM (length w) delayedWord16be
-    xs2 <- replicateM (length w) delayedWord8
-    mapM_ (uncurry undelay) $ zip xs1 (map fromIntegral w)
-    mapM_ (uncurry undelay) $ zip xs2 w
-
+    mapM_ (\x -> do xs1 <- delayedWord16be
+                    xs2 <- delayedWord8
+                    undelay xs1 (fromIntegral x)
+                    undelay xs2 x) w
 
 test0' w = runPutToByteString 32768 $ do
-    xs <- replicateM (length w) delayedWord8'
-    mapM_ (uncurry undelay') $ zip xs w
+    mapM_ (\x -> delayedWord8' >>= flip undelay' x) w
 
 test1' w =  runPutToByteString 32768 $ do
-    xs <- replicateM (length w) delayedWord16be'
-    mapM_ (uncurry undelay') $ zip xs (map Word16be w)
+    mapM_ (\x -> delayedWord16be' >>= flip undelay' (Word16be x)) w
 
 test2' w = runPutToByteString 32768 $ do
-    xs1 <- replicateM (length w) delayedWord16be'
-    xs2 <- replicateM (length w) delayedWord8'
-    mapM_ (uncurry undelay') $ zip xs1 (map (Word16be . fromIntegral) w)
-    mapM_ (uncurry undelay') $ zip xs2 w
+    mapM_ (\x -> do xs1 <- delayedWord16be'
+                    xs2 <- delayedWord8'
+                    undelay' xs1 (Word16be (fromIntegral x))
+                    undelay' xs2 x) w
 
 main = defaultMain 
   [ bgroup "word8"
