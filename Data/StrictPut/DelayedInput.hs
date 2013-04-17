@@ -20,17 +20,20 @@ module Data.StrictPut.DelayedInput
   , delayedWord8
   , delayedWord16be
   , undelay
-  , contramap
   -- * multiparam typeclass
   , DelayedPut''(..)
   , Delayed(..)
   , delayedWord8''
   , delayedWord16be''
+  -- * reexports
+  , Contravariant(..)
   ) where
 
 import Control.Monad (void)
-import GHC.Word
+import Data.Functor.Contravariant
 import Foreign hiding (void)
+import GHC.Word
+
 import Data.StrictPut.Types
 import Data.StrictPut.PutM
 
@@ -69,8 +72,8 @@ undelay' (DelayedPut' a) !x = PutM $ \p -> dput a x >> return ((),p)
 -- | Delayed action.
 newtype DelayedPut a = DelayedPut (a -> IO Int)
 
-contramap :: (a -> b) -> (DelayedPut b) -> (DelayedPut a)
-contramap f (DelayedPut g) = DelayedPut (g.f)
+instance Contravariant DelayedPut where
+  contramap f (DelayedPut g) = DelayedPut (g.f)
 
 undelay :: DelayedPut a 
         -> a 
@@ -90,14 +93,14 @@ delayedWord16be = PutM $ \p -> poke (castPtr p) (0::Word16) >>
 
 newtype DelayedPut'' a b = DelayedPut'' (Ptr Word8)
 
-class Delayed a b where
-  undelay'' :: DelayedPut'' a b -> b -> Put
+class Delayed a b c where
+  undelay'' :: a b c -> c -> Put
 
-instance Delayed Word8 Word8 where
+instance Delayed DelayedPut'' Word8 Word8 where
   undelay'' (DelayedPut'' a) !x = PutM $ \p -> poke a x >> return ((),p)
   {-# INLINE undelay'' #-}
 
-instance Delayed Word16be Word16 where
+instance Delayed DelayedPut'' Word16be Word16 where
   undelay'' (DelayedPut'' a) !x = PutM $ \p -> runPut a (putWord16be x) >> return ((),p)
   {-# INLINE undelay'' #-}
 
