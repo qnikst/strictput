@@ -1,4 +1,4 @@
-{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BangPatterns, MultiParamTypeClasses #-}
 -- | Module provides delayed input functionality,
 -- this basically means that you can input delayed
 -- action (at the moment it will be filled with zeros)
@@ -8,17 +8,24 @@
 -- prefixed data in case if you don't know the length 
 -- at begining of put.
 module Data.StrictPut.DelayedInput
-  ( DelayedPut'(..)
+  ( -- * value
+    DelayedPut'(..)
   , DPut(..)
   , Word16be(..)
   , delayedWord8'
   , delayedWord16be'
   , undelay'
+    -- * closure
   , DelayedPut
   , delayedWord8
   , delayedWord16be
   , undelay
   , contramap
+  -- * multiparam typeclass
+  , DelayedPut''(..)
+  , Delayed(..)
+  , delayedWord8''
+  , delayedWord16be''
   ) where
 
 import Control.Monad (void)
@@ -80,3 +87,24 @@ delayedWord16be :: PutM (DelayedPut Word16)
 delayedWord16be = PutM $ \p -> poke (castPtr p) (0::Word16) >>
                                return (DelayedPut $ runPut p . putWord16be, p `plusPtr` 2)
 {-# INLINE delayedWord16be #-}
+
+newtype DelayedPut'' a b = DelayedPut'' (Ptr Word8)
+
+class Delayed a b where
+  undelay'' :: DelayedPut'' a b -> b -> Put
+
+instance Delayed Word8 Word8 where
+  undelay'' (DelayedPut'' a) !x = PutM $ \p -> poke a x >> return ((),p)
+  {-# INLINE undelay'' #-}
+
+instance Delayed Word16be Word16 where
+  undelay'' (DelayedPut'' a) !x = PutM $ \p -> runPut a (putWord16be x) >> return ((),p)
+  {-# INLINE undelay'' #-}
+
+delayedWord8'' :: PutM (DelayedPut'' Word8 Word8)
+delayedWord8'' = PutM $ \p -> poke p (0::Word8) >> return (DelayedPut'' p,p `plusPtr` 1)
+{-# INLINE delayedWord8'' #-}
+
+delayedWord16be'' :: PutM (DelayedPut'' Word16be Word16)
+delayedWord16be'' = PutM $ \p -> poke (castPtr p) (0::Word16) >> return (DelayedPut'' p,p `plusPtr` 2)
+{-# INLINE delayedWord16be'' #-}
