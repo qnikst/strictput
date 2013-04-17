@@ -13,6 +13,9 @@ cabal-version:       >=1.8
 
 library
   exposed-modules:     Data.StrictPut
+                       Data.StrictPut.DelayedInput
+                       Data.StrictPut.PutM
+                       Data.StrictPut.Types
   -- other-modules:       
   build-depends:       base ==4.6.*, bytestring ==0.10.*
   ghc-options:        -Wall
@@ -20,8 +23,6 @@ library
                       -fmax-simplifier-iterations=10
                       -fdicts-cheap
                       -fspec-constr-count=6
-
-
 
 benchmark bench-strictput-simple-output
   type:               exitcode-stdio-1.0
