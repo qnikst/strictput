@@ -1,4 +1,4 @@
-{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BangPatterns, EmptyDataDecls #-}
 -- | 
 -- Module: Data.StrictPut
 -- Author: Andreas Voellmy <andreas.voellmy@yale.edu>
@@ -10,6 +10,7 @@ module Data.StrictPut.Types
   ( PutM(..)
   , Put
   , runPut
+  , Word16be
   ) where
 
 import Foreign
@@ -36,3 +37,5 @@ instance Monad PutM where
       case f a of 
         PutM !g -> g ptr')
   {-# INLINE (>>=) #-}
+
+data Word16be
