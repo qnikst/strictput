@@ -38,4 +38,7 @@ instance Monad PutM where
         PutM !g -> g ptr')
   {-# INLINE (>>=) #-}
 
+instance Functor PutM where
+  f `fmap` (PutM g) = PutM (\(!p) ->  g p >>= \(a,p') -> return (f a,p'))
+
 data Word16be
