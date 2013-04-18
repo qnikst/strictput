@@ -1,2 +1,11 @@
 /cabal-dev/
+/hpc-markup/
 /dist/
+*.hi
+*.o
+*.tix
+*.hpc
+*.dump-simpl
+*.dump-cmm
+*.dump-opt-cmm
+
