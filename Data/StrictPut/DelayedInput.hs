@@ -10,11 +10,12 @@
 module Data.StrictPut.DelayedInput
   ( -- * datatypes and classes
     DelayedPut(..)
-  , DelayedClosure(..)
   , Delayed(..)
   -- * methods
   , delayedWord8
   , delayedWord16be
+  , DelayedClosure(..)
+  , closure
   -- * reexports
   , Contravariant(..)
   ) where
@@ -51,12 +52,15 @@ delayedWord16be = PutM $ \p -> poke (castPtr p) (0::Word16) >> return (DelayedPu
 
 -- | Wrapper for delayed function, this approach is slitly less efficient
 -- hovewer it supports 'contramap'
-newtype DelayedClosure a b = DelayedClosure (b -> IO Int)
+newtype DelayedClosure a b = DelayedClosure (b -> Put)
 
 instance Contravariant (DelayedClosure a) where
   contramap f (DelayedClosure g) = DelayedClosure (g.f)
   {-# INLINE contramap #-}
 
 instance Delayed DelayedClosure a b where
-  undelay (DelayedClosure f) !x = PutM $ \p -> f x >> return ((),p)
+  undelay (DelayedClosure f) !x = f x >> return ()
   {-# INLINE undelay #-}
+
+closure :: Delayed a b c => a b c -> DelayedClosure b c
+closure x = DelayedClosure $ \y -> undelay x y
