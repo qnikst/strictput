@@ -24,6 +24,13 @@ library
                       -fdicts-cheap
                       -fspec-constr-count=6
 
+test-suite test-strictput-delayed-put
+  type:               exitcode-stdio-1.0
+  hs-source-dirs:     test
+  main-is:            delayed-put.hs
+  build-depends:      base, QuickCheck,strictput, quickcheck-assertions, hspec, bytestring
+  ghc-options:        -Wall
+
 benchmark bench-strictput-simple-output
   type:               exitcode-stdio-1.0
   hs-source-dirs:     bench
