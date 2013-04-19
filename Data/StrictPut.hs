@@ -21,12 +21,6 @@
 -- for the the Word8 array, except to pass it to an IO procedure to write the data to a socket or file.
 module Data.StrictPut (
   runPutToByteString,
-  -- * Markers
-  Marker,
-  marker,
-  toAddr,
-  distance,
-  shrink,
   -- * Buffer
   runPutToBuffer,
   Buffer,
@@ -35,6 +29,7 @@ module Data.StrictPut (
   bufferSize,
   reuse,
   module Data.StrictPut.DelayedInput,
+  module Data.StrictPut.Marker,
   module Data.StrictPut.Types,
   module Data.StrictPut.PutM
   ) where
@@ -44,10 +39,10 @@ import qualified Data.ByteString.Internal as S
 import GHC.Word
 import Foreign hiding ( unsafeForeignPtrToPtr )
 import Foreign.ForeignPtr.Unsafe ( unsafeForeignPtrToPtr )
-import GHC.Exts
 import System.IO.Unsafe
 import Data.StrictPut.DelayedInput
 import Data.StrictPut.Types
+import Data.StrictPut.Marker
 import Data.StrictPut.PutM
 
 
@@ -58,32 +53,6 @@ runPutToByteString maxSize put =
   unsafeDupablePerformIO (S.createAndTrim maxSize (\ptr -> runPut ptr put))
   -- unsafeDupablePerformIO (S.createAndTrim maxSize (\ptr -> (`minusPtr` ptr) <$> runPut ptr put ))
   
--- | get current address
-
--- | Mark currect address
-newtype Marker = Marker (Ptr Word8)
-
--- | Create new marker at current position/
-marker :: PutM Marker
-marker = PutM $ \x -> return (Marker x, x)
-{-# INLINE marker #-}
-
--- | Find difference in current position and marker.
-distance :: Marker 
-         -> PutM Int
-distance (Marker x) = PutM $ \x' -> return (x' `minusPtr` x, x')
-{-# INLINE distance #-}
-
-shrink :: Marker
-        -> Put
-shrink (Marker x) = PutM $ \_ -> return  ((),x)
-{-# INLINE shrink #-}
-
--- | Get real address
-toAddr :: Marker -> Addr#
-toAddr (Marker (Ptr a)) = a
-{-# INLINE toAddr #-}
-
 data Buffer = Buffer {-# UNPACK #-} !(ForeignPtr Word8)   -- pinned array
                      {-# UNPACK #-} !(Ptr Word8)          -- current position
                      {-# UNPACK #-} !Int                  -- current size
