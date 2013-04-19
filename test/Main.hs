@@ -1,15 +1,20 @@
 import Control.Applicative 
+import Control.Concurrent.MVar
+import Control.Exception
+import Control.Monad
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as LBS
 import Data.ByteString.Lazy.Builder
 import Data.List
 import Data.Monoid
 import Data.Word
+import System.IO.Unsafe
 
 import Test.Hspec
 import Test.Hspec.QuickCheck
 import Test.QuickCheck.Assertions
 import Test.QuickCheck.Property
+import Test.QuickCheck.Monadic
 import Test.QuickCheck hiding (Result)
 
 import Data.StrictPut
@@ -41,6 +46,18 @@ test_putByteString :: [Word8] -> Result
 test_putByteString ws = (runPutToByteString 32768 $ putByteString bs) ?== bs
   where bs = BS.pack ws
 
+prop_dist :: Word8 -> Property
+prop_dist i = monadicIO $ do
+    ret <- run $ newEmptyMVar
+    run . evaluate $ runPutToByteString 32768 $ do
+       x <- marker
+       replicateM_ (fromIntegral i) (putWord8 0)
+       l <- distance x
+       unsafePerformIO (putMVar ret l) `seq` return ()
+    x <- run $ takeMVar ret
+    stop $ x ==? (fromIntegral i)
+
+
 main = hspec $ do
     describe "minial delayed put functionality" $ do
         prop "word8"  $ (test_dputWord8 :: [Word8] -> Result)
@@ -52,5 +69,7 @@ main = hspec $ do
         prop "word16be"   $ (test_putWord16be   :: [Word16] -> Result)
         prop "word32be"   $ (test_putWord32be   :: [Word32] -> Result)
         prop "word64be"   $ (test_putWord64be   :: [Word64] -> Result)
+    describe "minimal marker functionality" $do
+        prop "dist"       $ (prop_dist :: Word8 -> Property)
 
         

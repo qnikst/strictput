@@ -12,9 +12,9 @@ fi
 #${CABAL_DEV} build || exit 1
 #${CABAL_DEV} test  || exit 1
 
-ghc -fhpc test/delayed-put.hs
-rm delayed-put.tix 
-./test/delayed-put
+ghc -fhpc test/Main.hs
+rm Main.tix 
+./test/Main
 
 #dist/build/2pc-tests/2pc-tests
 #rm -f system-fileio_tests.tix
@@ -27,5 +27,5 @@ rm delayed-put.tix
   #--exclude=FilesystemTests.Windows
 #"
 
-hpc markup --srcdir=. delayed-put.tix --destdir=hpc-markup > /dev/null
-hpc report --srcdir=. delayed-put.tix
+hpc markup --srcdir=. Main.tix --destdir=hpc-markup > /dev/null
+hpc report --srcdir=. Main.tix
