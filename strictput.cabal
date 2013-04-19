@@ -17,7 +17,7 @@ library
                        Data.StrictPut.PutM
                        Data.StrictPut.Types
   -- other-modules:       
-  build-depends:       base ==4.6.*, bytestring ==0.10.2.*, contravariant
+  build-depends:       base ==4.6.*, bytestring ==0.10.*, contravariant
   ghc-options:        -Wall
                       -O2
                       -fmax-simplifier-iterations=10
@@ -35,7 +35,7 @@ benchmark bench-strictput-simple-output
   type:               exitcode-stdio-1.0
   hs-source-dirs:     bench
   main-is:            SimpleOutput.hs
-  build-depends:      base, criterion, bytestring ==0.10.2.*, strictput, silently
+  build-depends:      base, criterion, bytestring ==0.10.*, strictput, silently
   ghc-options:        -O2
                       -fmax-simplifier-iterations=10
                       -fdicts-cheap
