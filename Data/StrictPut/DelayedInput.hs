@@ -1,4 +1,9 @@
 {-# LANGUAGE BangPatterns, MultiParamTypeClasses, FlexibleInstances #-}
+-- Module:    Data.StrictPut.DelayedInput
+-- Author:    Alexander Vershilov <alexander.vershilov@gmail.com>
+-- License:   BSD-3
+-- Stability: unstable
+--
 -- | Module provides delayed input functionality,
 -- this basically means that you can input delayed
 -- action (at the moment it will be filled with zeros)

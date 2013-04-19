@@ -14,6 +14,7 @@ cabal-version:       >=1.8
 library
   exposed-modules:     Data.StrictPut
                        Data.StrictPut.DelayedInput
+                       Data.StrictPut.Marker
                        Data.StrictPut.PutM
                        Data.StrictPut.Types
   -- other-modules:       
@@ -27,15 +28,15 @@ library
 test-suite test-strictput-delayed-put
   type:               exitcode-stdio-1.0
   hs-source-dirs:     test
-  main-is:            delayed-put.hs
-  build-depends:      base, QuickCheck,strictput, quickcheck-assertions, hspec, bytestring
+  main-is:            Main.hs
+  build-depends:      base, QuickCheck,strictput, quickcheck-assertions, hspec, bytestring ==0.10.2.*
   ghc-options:        -Wall
 
 benchmark bench-strictput-simple-output
   type:               exitcode-stdio-1.0
   hs-source-dirs:     bench
   main-is:            SimpleOutput.hs
-  build-depends:      base, criterion, bytestring, strictput, silently
+  build-depends:      base, criterion, bytestring ==0.10.*, strictput, silently
   ghc-options:        -O2
                       -fmax-simplifier-iterations=10
                       -fdicts-cheap
@@ -45,7 +46,7 @@ benchmark bench-delayed-input
   type:               exitcode-stdio-1.0
   hs-source-dirs:     bench
   main-is:            delayed-input.hs
-  build-depends:      base, criterion, bytestring, strictput, silently
+  build-depends:      base, criterion, bytestring ==0.10.2.*, strictput, silently
   ghc-options:        -O2
                       -fmax-simplifier-iterations=10
                       -fdicts-cheap
