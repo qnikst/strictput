@@ -1,5 +1,6 @@
 language: "haskell"
 install:
+    - "cabal update"
     - "cabal install HUnit async hspec bytestring contravariant hspec quickcheck-assertions"
     - "cabal configure --enable-tests"
     - "cabal build"
