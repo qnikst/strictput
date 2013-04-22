@@ -45,6 +45,8 @@ test_putWord64be ws = (runPutToByteString 32768 $ mapM_ putWord64be ws)
 test_putByteString :: [Word8] -> Result
 test_putByteString ws = (runPutToByteString 32768 $ putByteString bs) ?== bs
   where bs = BS.pack ws
+test_putZeros :: Word8 -> Result
+test_putZeros x = (runPutToByteString 256 $ putZeros (fromIntegral x)) ?== (BS.replicate (fromIntegral x) 0)
 
 prop_dist :: Word8 -> Property
 prop_dist i = monadicIO $ do
@@ -69,6 +71,7 @@ main = hspec $ do
         prop "word16be"   $ (test_putWord16be   :: [Word16] -> Result)
         prop "word32be"   $ (test_putWord32be   :: [Word32] -> Result)
         prop "word64be"   $ (test_putWord64be   :: [Word64] -> Result)
+        prop "zeros"      $ (test_putZeros      :: Word8    -> Result)
     describe "minimal marker functionality" $do
         prop "dist"       $ (prop_dist :: Word8 -> Property)
 

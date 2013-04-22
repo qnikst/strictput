@@ -12,6 +12,7 @@ module Data.StrictPut.PutM
   , putWord32be
   , putWord64be
   , putByteString
+  , putZeros
   ) where
 
 import qualified Data.ByteString as S
@@ -85,6 +86,10 @@ putByteString !bs = PutM f
           in do withForeignPtr fp $ \bsptr -> S.memcpy ptr (bsptr `plusPtr` offset) (fromIntegral len)
                 return ((), ptr `plusPtr` len)
 {-# INLINE putByteString #-}
+
+putZeros :: Int -> Put
+putZeros !i = PutM $ \p -> S.memset p 0 (fromIntegral i) >> return ((), p `plusPtr` i)
+{-# INLINE putZeros #-}
 
 {-# INLINE shiftr_w16 #-}
 shiftr_w16 :: Word16 -> Int -> Word16
