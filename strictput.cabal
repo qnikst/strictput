@@ -18,7 +18,7 @@ library
                        Data.StrictPut.PutM
                        Data.StrictPut.Types
   -- other-modules:       
-  build-depends:       base ==4.6.*, bytestring ==0.10.*, contravariant
+  build-depends:       base ==4.*, bytestring ==0.10.*, contravariant
   ghc-options:        -Wall
                       -O2
                       -fmax-simplifier-iterations=10
