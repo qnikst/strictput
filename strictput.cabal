@@ -29,7 +29,7 @@ test-suite test-strictput-delayed-put
   type:               exitcode-stdio-1.0
   hs-source-dirs:     test
   main-is:            Main.hs
-  build-depends:      base, QuickCheck,strictput, quickcheck-assertions, hspec, bytestring ==0.10.2.*
+  build-depends:      base, QuickCheck,strictput, quickcheck-assertions, hspec, bytestring ==0.10.*
   ghc-options:        -Wall
 
 benchmark bench-strictput-simple-output
