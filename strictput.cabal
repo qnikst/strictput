@@ -46,7 +46,7 @@ benchmark bench-delayed-input
   type:               exitcode-stdio-1.0
   hs-source-dirs:     bench
   main-is:            delayed-input.hs
-  build-depends:      base, criterion, bytestring ==0.10.2.*, strictput, silently
+  build-depends:      base, criterion, bytestring ==0.10.*, strictput, silently
   ghc-options:        -O2
                       -fmax-simplifier-iterations=10
                       -fdicts-cheap
