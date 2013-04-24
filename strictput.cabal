@@ -17,6 +17,7 @@ library
                        Data.StrictPut.Marker
                        Data.StrictPut.PutM
                        Data.StrictPut.Types
+                       Data.StrictPut.Buffer
   -- other-modules:       
   build-depends:       base ==4.*, bytestring ==0.10.*, contravariant
   ghc-options:        -Wall
