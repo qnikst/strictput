@@ -21,30 +21,21 @@
 -- for the the Word8 array, except to pass it to an IO procedure to write the data to a socket or file.
 module Data.StrictPut (
   runPutToByteString,
-  -- * Buffer
-  runPutToBuffer,
-  Buffer,
-  mkBuffer,
-  extract,
-  bufferSize,
-  reuse,
   module Data.StrictPut.DelayedInput,
   module Data.StrictPut.Marker,
   module Data.StrictPut.Types,
-  module Data.StrictPut.PutM
+  module Data.StrictPut.PutM,
+  module Data.StrictPut.Buffer
   ) where
 
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Internal as S
-import GHC.Word
-import Foreign hiding ( unsafeForeignPtrToPtr )
-import Foreign.ForeignPtr.Unsafe ( unsafeForeignPtrToPtr )
 import System.IO.Unsafe
 import Data.StrictPut.DelayedInput
 import Data.StrictPut.Types
 import Data.StrictPut.Marker
 import Data.StrictPut.PutM
-
+import Data.StrictPut.Buffer
 
 -- | Allocates a new byte string, and runs the Put writer with that byte string.
 -- The first argument is an upper bound on the size of the array needed to do the serialization.
@@ -53,25 +44,3 @@ runPutToByteString maxSize put =
   unsafeDupablePerformIO (S.createAndTrim maxSize (\ptr -> runPut ptr put))
   -- unsafeDupablePerformIO (S.createAndTrim maxSize (\ptr -> (`minusPtr` ptr) <$> runPut ptr put ))
   
-data Buffer = Buffer {-# UNPACK #-} !(ForeignPtr Word8)   -- pinned array
-                     {-# UNPACK #-} !(Ptr Word8)          -- current position
-                     {-# UNPACK #-} !Int                  -- current size
-
-bufferSize :: Buffer -> Int
-bufferSize (Buffer _ _ i) = i
-
-reuse :: Buffer -> Buffer
-reuse (Buffer f _ _) = Buffer f (unsafeForeignPtrToPtr f) 0
-
-extract :: Buffer -> S.ByteString
-extract (Buffer f _ c) = S.fromForeignPtr f 0 c
-
-mkBuffer :: Int -> IO Buffer
-mkBuffer sz = do
-    fpbuf <- S.mallocByteString sz
-    let !pbuf = unsafeForeignPtrToPtr fpbuf
-    return $! Buffer fpbuf pbuf 0 
-
-
-runPutToBuffer :: Buffer -> Put -> IO Buffer
-runPutToBuffer (Buffer f p x) put = runPut p put >>= \i -> return (Buffer f (p `plusPtr`i)  (x+i))
