@@ -2,8 +2,8 @@ language: haskell
 install:
     - "cabal update"
     - "cabal install cabal-dev" 
-    - "~/.cabal/bin/cabal-dev install HUnit hspec quickcheck-assertions --contraint=bytestring-10.0.2"
-    - "~/.cabal/bin/cabal-dev install --only-dependencies --reinstall --force-reinstalls"
+    - "~/.cabal/bin/cabal-dev install HUnit hspec quickcheck-assertions --contraint='bytestring == 10.0.2'"
+    - "~/.cabal/bin/cabal-dev install --only-dependencies --reinstall --force-reinstalls --contraint='bytestring == 10.0.2'"
     - "~/.cabal/bin/cabal-dev configure --enable-tests"
     - "~/.cabal/bin/cabal-dev build"
     - "~/.cabal/bin/cabal-dev test"
