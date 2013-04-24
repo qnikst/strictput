@@ -1,7 +1,7 @@
 language: haskell
 install:
     - "cabal update"
-    - "cabal install HUnit hspect hspec quickcheck-assertions"
+    - "cabal install HUnit hspec quickcheck-assertions"
     - "cabal install cabal-dev" 
     - "~/.cabal/bin/cabal-dev install --only-dependencies --reinstall --force-reinstalls"
     - "~/.cabal/bin/cabal-dev configure --enable-tests"
