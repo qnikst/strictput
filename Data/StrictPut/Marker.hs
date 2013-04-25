@@ -19,6 +19,7 @@ module Data.StrictPut.Marker
   , toPtr
   -- * utility functions
   , distance
+  , distanceTo
   , shrink
   ) where
 
@@ -48,6 +49,10 @@ distance :: Marker
          -> PutM Int
 distance (Marker x) = PutM $ \x' -> return (x' `minusPtr` x, x')
 {-# INLINE distance #-}
+
+-- | Find distance between to markers
+distanceTo :: Marker -> Marker -> PutM Int
+distanceTo (Marker x) (Marker y) =  return (y `minusPtr` x)
 
 -- | Shrink data to marker
 shrink :: Marker
