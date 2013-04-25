@@ -25,7 +25,8 @@ module Data.StrictPut (
   module Data.StrictPut.Marker,
   module Data.StrictPut.Types,
   module Data.StrictPut.PutM,
-  module Data.StrictPut.Buffer
+  module Data.StrictPut.Buffer,
+  module Data.StrictPut.LookBehind
   ) where
 
 import qualified Data.ByteString as S
@@ -36,6 +37,7 @@ import Data.StrictPut.Types
 import Data.StrictPut.Marker
 import Data.StrictPut.PutM
 import Data.StrictPut.Buffer
+import Data.StrictPut.LookBehind
 
 -- | Allocates a new byte string, and runs the Put writer with that byte string.
 -- The first argument is an upper bound on the size of the array needed to do the serialization.

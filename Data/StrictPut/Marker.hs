@@ -15,7 +15,7 @@
 module Data.StrictPut.Marker
   ( Marker
   , marker
-  , toAddr
+  , toAddr#
   , toPtr
   -- * utility functions
   , distance
@@ -31,9 +31,9 @@ import Data.StrictPut.Types
 newtype Marker = Marker {unMarker :: Ptr Word8}
 
 -- | Get real address
-toAddr :: Marker -> Addr#
-toAddr (Marker (Ptr a)) = a
-{-# INLINE toAddr #-}
+toAddr# :: Marker -> Addr#
+toAddr# (Marker (Ptr a)) = a
+{-# INLINE toAddr# #-}
 
 toPtr :: Marker -> Ptr a
 toPtr = castPtr . unMarker
