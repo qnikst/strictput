@@ -9,6 +9,7 @@ module Data.StrictPut.LookBehind
   ( lookByteString
   -- lookVector ?
   , withAddr#
+  , withAddrTo#
   ) where
 
 import Data.ByteString (ByteString)
@@ -29,3 +30,8 @@ withAddr# :: Marker -> ( Addr# -> Int# -> a) -> PutM a
 withAddr# m f = do 
   I# len# <- distance m
   return $ f (toAddr# m) len#
+
+withAddrTo# :: Marker -> Marker -> (Addr# -> Int# -> a) -> PutM a
+withAddrTo# x y f = do
+  I# len# <- x `distanceTo` y
+  return $ f (toAddr# x) len#
